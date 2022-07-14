@@ -141,17 +141,7 @@ if( $REQUEST_TYPE == "api" ){
 }
 
 ?>
-<?php
 
-    // handle request type [interactive].
-    if( $REQUEST_TYPE == "interactive" ){
-
-        // todo ...
-        echo "interactive mode coming soon ...";
-
-    }
-
-?>
 <?php
 
     // handle request type [storage].
@@ -167,5 +157,44 @@ if( $REQUEST_TYPE == "api" ){
         dump($data);
 
     }
+
+?>
+<?php
+
+// handle request type [interactive].
+if( $REQUEST_TYPE == "interactive" ){
+
+// <-- INTERACTIVE_MODE_TEMPLATE_START --> 
+
+?>
+
+<!doctype html>
+
+<html lang="en">
+<head>
+    <title>Board</title>
+    <meta charset="utf-8">
+    <meta name="viewport"           content="width=device-width, initial-scale=1">
+    <meta name="description"        content="A board to chuck requests at.">
+    <meta name="author"             content="zrxr">
+    <meta property="og:title"       content="Board">
+    <meta property="og:type"        content="website">
+    <meta property="og:description" content="A board to chuck requests at.">
+    <meta property="og:image"       content="image.png">
+</head>
+<body>
+
+
+
+
+    <script src="jquery.js"></script>
+</body>
+</html>
+
+<?php
+
+// <-- INTERACTIVE_MODE_TEMPLATE_END --> 
+
+}
 
 ?>
