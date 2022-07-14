@@ -1,6 +1,6 @@
 <?php /**
  * 
- *  src/webroot/indx.php
+ *  src/webroot/index.php
  * 
  */?>
 <?php
@@ -97,8 +97,12 @@ if( $REQUEST_TYPE == "api" ){
     // requests data.
     $requests_data = array();
 
+    // request files.
+    $request_files = scandir($requests_dir);
+    rsort($request_files);
+
     // requests.
-    foreach( scandir($requests_dir) as $request_file ){
+    foreach( $request_files as $request_file ){
         if( str_ends_with($request_file, '.json') ){
         
             // request json.
@@ -107,8 +111,20 @@ if( $REQUEST_TYPE == "api" ){
             // request json decode.
             $request_data = json_decode($request_json, true);
 
+            // request pieces / epoch / date.
+            $request_file_pieces = explode('.', $request_file);
+            $request_file_epoch  = $request_file_pieces[1];
+            $request_file_date   = date('r', intval($request_file_epoch));
+
             // requests data append request data.
-            $requests_data[] = $request_data;
+            $requests_data[] = array(
+                "meta" => array(
+                    "file"  => $request_file,
+                    "epoch" => $request_file_epoch,
+                    "date"  => $request_file_date
+                ),
+                "data" => $request_data
+            );
 
         }
     }
