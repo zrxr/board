@@ -8,10 +8,15 @@
     function collect() {
         $data            = array();
         $data['get']     = $_GET;
+        $data['json']    = collect_json();
         $data['post']    = $_POST;
         $data['request'] = $_REQUEST;
         $data['server']  = $_SERVER;
         return $data;
+    }
+    function collect_json() {
+        $json = file_get_contents('php://input');
+        return json_decode($json);
     }
 
     function dump($data) {
