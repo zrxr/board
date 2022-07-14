@@ -95,6 +95,9 @@ if( $REQUEST_TYPE == "api" ){
     // requests data.
     $requests_data = array();
 
+    // requests limit.
+    $requests_limit = 16;
+
     // request files.
     $request_files = scandir($requests_dir);
     rsort($request_files);
@@ -124,6 +127,11 @@ if( $REQUEST_TYPE == "api" ){
                 ),
                 "data"   => $request_data
             );
+
+            // requests limit.
+            if( count($requests_data) == $requests_limit ){
+                break;
+            }
 
         }
     }
