@@ -121,7 +121,13 @@ if( $REQUEST_TYPE == "api" ){
     // requests.
     foreach( $request_files as $request_file ){
         if( str_ends_with($request_file, '.json') ){
-        
+
+            // requests limit [cleanup].
+            if( count($requests_data) == $requests_limit ){
+                unlink("{$requests_dir}/${request_file}");
+                continue;
+            }
+            
             // request json.
             $request_json = file_get_contents("{$requests_dir}/${request_file}");
 
@@ -143,11 +149,6 @@ if( $REQUEST_TYPE == "api" ){
                 ),
                 "data"   => $request_data
             );
-
-            // requests limit.
-            if( count($requests_data) == $requests_limit ){
-                break;
-            }
 
         }
     }
