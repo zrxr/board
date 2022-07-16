@@ -35,7 +35,7 @@
 	"forwardPorts": [8080],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)/src/webroot\" /var/www/html && sudo apachectl start",
+	"postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)/src/webroot\" /var/www/html && sudo apachectl start && sudo mkdir -p /var/board/requests && sudo chown -R www-data: /var/board && make install",
 	
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
