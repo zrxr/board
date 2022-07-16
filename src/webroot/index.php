@@ -4,19 +4,30 @@
  * 
  */?>
 <?php
+if( isset($_ENV['BOARD_REQUESTS_LIMIT']) ){ $REQUESTS_LIMIT = $_ENV['BOARD_REQUESTS_LIMIT']; } else { $REQUESTS_LIMIT =  32; }
+if( isset($_ENV['BOARD_REFRESH_DELAY'])  ){ $REFRESH_DELAY  = $_ENV['BOARD_REFRESH_DELAY'];  } else { $REFRESH_DELAY  = 400; }
+?>
+<?php
 
     function collect() {
         $data            = array();
+        $data['cookie']  = $_COOKIE;
+        $data['files']   = $_FILES;
         $data['get']     = $_GET;
         $data['json']    = collect_json();
         $data['post']    = $_POST;
         $data['request'] = $_REQUEST;
         $data['server']  = $_SERVER;
+        $data['session'] = collect_session();
         return $data;
     }
     function collect_json() {
         $json = file_get_contents('php://input');
         return json_decode($json);
+    }
+    function collect_session() {
+        session_start();
+        return $_SESSION;
     }
 
     function dump($data) {
@@ -55,7 +66,7 @@
 
         // save file exists filename extend.
         while( file_exists("{$save_dir}/${save_file}") ){
-            $save_file = 'request.'.time().'-'.rand(10000000,99999999).'.json';
+            $save_file = 'request.'.time().'-'.rand(100000000000,999999999999).'.json';
         }
 
         // save data json.
@@ -101,7 +112,7 @@ if( $REQUEST_TYPE == "api" ){
     $requests_data = array();
 
     // requests limit.
-    $requests_limit = 16;
+    $requests_limit = $REQUESTS_LIMIT;
 
     // request files.
     $request_files = scandir($requests_dir);
@@ -247,6 +258,7 @@ if( $REQUEST_TYPE == "interactive" ){
             height: 100%;
             width:  100%;
             min-height: 800px;
+            min-width:  400px;
         }
 
         .requests {
@@ -255,7 +267,7 @@ if( $REQUEST_TYPE == "interactive" ){
         }
         .requests .request {
             border: 2px solid #202225;
-            height: 100px;
+            height: 64px;
             width:  calc( 100% - 4px );
             overflow: hidden;
             cursor: pointer;
@@ -264,17 +276,44 @@ if( $REQUEST_TYPE == "interactive" ){
             display: none;
         }
         .requests .request .title {
+            margin: 18px 0px;
             text-align: center;
-            padding: 28px;
+            height: 64px;
+            width: 100%;
         }
-        .requests .request .title h1 {
+        .requests .request .title span {
             font-family: 'Karla', sans-serif;
+            font-size: 24px;
         }
         .requests .request .body {
             text-align: center;
         }
         .requests .request .body.hidden {
             display: none;
+        }
+
+        .animate-prepend {
+            animation-fill-mode: both;
+            animation-name: animation-prepend;
+            animation-duration: 2s;
+        }
+        @keyframes animation-prepend {
+            from {
+                height: 0px;
+            }
+            to {
+                height: 64px;
+            }
+        }
+
+        .animate-prepend-text {
+            animation-fill-mode: both;
+            animation-name:      animation-prepend-text;
+            animation-duration:  4s;
+        }
+        @keyframes animation-prepend-text {
+            from { color: white;   }
+            to   { color: #888888; }
         }
 
     </style>
@@ -306,19 +345,14 @@ if( $REQUEST_TYPE == "interactive" ){
 
                         // prepend request.
                         $(".requests").prepend(
-                            '<div id="' + request['meta']['id'] + '" class="request bg-midground text-foreground hidden">' +
+                            '<div id="' + request['meta']['id'] + '" class="request bg-midground text-foreground animate-prepend">' +
                                 '<a href="index.php?board-request-type-file=' + request['meta']['file'] + '">' +
-                                    '<div class="title text-foreground">' +
-                                        '<h1>' + request['meta']['date'] + '</h1>' +
+                                    '<div class="title text-foreground animate-prepend-text">' +
+                                        '<span>' + request['meta']['date'] + '</span>' +
                                     '</div>' +
                                 '</a>' +
                             '</div>'
                         );
-
-                        // prepend request animate.
-                        setTimeout(function() {
-                            $("#" + request['meta']['id']).show("slow");
-                        }, 100);
 
                     }
 
@@ -327,7 +361,7 @@ if( $REQUEST_TYPE == "interactive" ){
                 // refresh.
                 setTimeout(function() {
                     refresh();
-                }, 400);
+                }, <?php echo $REFRESH_DELAY; ?> );
 
             });
         }

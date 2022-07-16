@@ -1,1 +1,5 @@
+# env
+.env
+
+# src
 src/webroot/jquery.js
